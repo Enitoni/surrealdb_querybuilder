@@ -65,6 +65,11 @@ impl<'binding> Query<'binding> {
     }
 }
 
+/// Builds on a passed [Query]
+pub trait QueryBuilder<'bindings> {
+    fn build(self, query: &mut Query<'bindings>);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
