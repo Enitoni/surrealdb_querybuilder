@@ -1,14 +1,11 @@
 use std::{collections::HashMap, fmt::Debug};
 
-pub trait ValueLike: erased_serde::Serialize + Debug + Send {}
-impl<T> ValueLike for T where T: erased_serde::Serialize + Debug + Send {}
-
-type Binding<'a> = Box<dyn ValueLike + 'a>;
+use crate::value::{BoxedValue, ValueLike};
 
 /// A query building primitive that simplifies building the query string with binding parameters
 #[derive(Debug, Default)]
 pub struct Query<'binding> {
-    bindings: HashMap<String, Binding<'binding>>,
+    bindings: HashMap<String, BoxedValue<'binding>>,
     sql: String,
 }
 
@@ -60,7 +57,7 @@ impl<'binding> Query<'binding> {
     }
 
     /// Splits the query into a tuple, consuming it in the process
-    pub fn split(self) -> (String, HashMap<String, Binding<'binding>>) {
+    pub fn split(self) -> (String, HashMap<String, BoxedValue<'binding>>) {
         (self.sql, self.bindings)
     }
 }
